@@ -59,6 +59,7 @@ package org.robotlegs.demos.imagegallery.views.mediators
 		public var proxy:GalleryModel;
 		
 		private var progress:GallerySearchProgress = new GallerySearchProgress();
+		private var selectedImageVector:Vector.<BitmapData>;
 		
 		public function GalleryViewMediator()
 		{
@@ -112,10 +113,14 @@ package org.robotlegs.demos.imagegallery.views.mediators
 			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, 
 				function f(event:Event):void 
 				{ 
+					selectedImageVector = divideAndConquer(Bitmap(event.target.content));
 					var tween1:GTween = new GTween(progress, .5, {alpha:0}, {ease:Sine.easeIn});
 					var tween2:GTween = new GTween(progress, .5, {y:galleryView.height}, {ease:Back.easeIn});
 					tween2.dispatchEvents = true;
-					tween2.addEventListener(Event.COMPLETE, function f():void {galleryView.animatedLayout.animateFlip();});
+					tween2.addEventListener(Event.COMPLETE, function f():void 
+					{
+						galleryView.animatedLayout.animateFlip(selectedImageVector);
+					});
 				});
 			loader.load(new URLRequest(image.URL));
 
@@ -139,30 +144,23 @@ package org.robotlegs.demos.imagegallery.views.mediators
 			//this.galleryView.setThumbScrollPosition(0); 
 		}
 		
-		private function divideAndConquer(image:GalleryImage):void
+		private function divideAndConquer(source:Bitmap, rectWidth:int = 30, rectHeight:int = 30):Vector.<BitmapData>
 		{
-			/*
 			var columns:int = galleryView.animatedLayout.requestedColumnCount;
 			var rows:int = galleryView.animatedLayout.requestedRowCount;
 			
-			var squareSize:int = 30;
-
 			var bitmapVector:Vector.<BitmapData> = new Vector.<BitmapData>();
 			for (var i:int = 0; i < columns; i++)
 			{
 				for (var j:int = 0; j < rows; j++)
 				{
-					var rect:Rectangle = new Rectangle(j*squareSize, i * squareSize, squareSize, squareSize);
-					var bm:BitmapData = new BitmapData(squareSize, squareSize, false, 0x000000);
-					bm.copyPixels(source, rect, new Point());
+					var rect:Rectangle = new Rectangle(j * rectWidth, i * rectHeight, rectWidth, rectHeight);
+					var bm:BitmapData = new BitmapData(rectWidth, rectHeight, false, 0x000000);
+					bm.copyPixels(source.bitmapData, rect, new Point());
 					bitmapVector.push(bm);
 				}
 			}
-			*/
-
-			
-			//galleryView.animatedLayout.animateFlip();
-			
+			return bitmapVector;
 		}
 	}
 }

@@ -27,6 +27,7 @@
 			import org.robotlegs.demos.imagegallery.events.GalleryImageEvent;
 			import org.robotlegs.demos.imagegallery.models.vo.GalleryImage;
 			
+			public var imagePiece:BitmapData;
 			[Bindable] protected var image:GalleryImage;
 			
 			override public function set data(value:Object):void

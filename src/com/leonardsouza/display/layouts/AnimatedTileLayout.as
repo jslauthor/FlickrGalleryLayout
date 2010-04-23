@@ -31,6 +31,7 @@ package com.leonardsouza.display.layouts
 	import mx.events.EffectEvent;
 	import mx.events.PropertyChangeEvent;
 	
+	import org.robotlegs.demos.imagegallery.models.vo.GalleryImage;
 	import org.robotlegs.demos.imagegallery.views.components.renderers.GalleryImageThumbnailItemRenderer;
 	
 	import spark.components.supportClasses.GroupBase;
@@ -1722,15 +1723,14 @@ package com.leonardsouza.display.layouts
 		
 		public function animateFlip(vec:Vector.<BitmapData> = null):void
 		{
-			// I took a lot of this from Christophe Coenraets blog post about layouts, thanks Christophe!
-			
 			if (_flipEffects != null && _flipEffects.isPlaying) return;
-			target.autoLayout = false;// Do not call updateDisplayList()
+			target.autoLayout = false; // Do not call updateDisplayList()
 			
 			_flipEffects = new Parallel();
 			var numElements:int = target.numElements;
 			if (numElements == 0) return;
-			var itemRenderer:ItemRenderer;
+			
+			var itemRenderer:GalleryImageThumbnailItemRenderer;
 			var flipEffect:Rotate3D;
 			
 			var delayCount:int = 0;
@@ -1742,12 +1742,25 @@ package com.leonardsouza.display.layouts
 					try
 					{
 						delayCount += 5;
-						itemRenderer = target.getElementAt((i*(requestedRowCount))+j) as ItemRenderer;
+						itemRenderer = GalleryImageThumbnailItemRenderer(target.getElementAt((i*(requestedRowCount))+j));
+						itemRenderer.imagePiece = vec[(i*(requestedRowCount))+j];
+						trace((i*(requestedRowCount))+j);
 						flipEffect = new Rotate3D(itemRenderer);
 						flipEffect.autoCenterTransform = true;
 						flipEffect.startDelay = delayCount;
 						flipEffect.duration = 400;
-						flipEffect.angleXTo = 180;
+						flipEffect.angleXTo = 90;
+						flipEffect.addEventListener(EffectEvent.EFFECT_END, function f(event:EffectEvent):void
+						{
+							var item:GalleryImageThumbnailItemRenderer = GalleryImageThumbnailItemRenderer(event.effectInstance.target);
+							item.img.source = new Bitmap(item.imagePiece);
+							var flipEffect:Rotate3D = new Rotate3D(item);
+							flipEffect.autoCenterTransform = true;
+							flipEffect.startDelay = delayCount;
+							flipEffect.duration = 400;
+							flipEffect.angleXTo = 0;
+							flipEffect.play();
+						});
 						_flipEffects.addChild(flipEffect);					
 					}
 					catch (error:Error)
@@ -1759,7 +1772,11 @@ package com.leonardsouza.display.layouts
 				delayCount -= reduceCount;
 			}
 			
-			_flipEffects.addEventListener(EffectEvent.EFFECT_END, function f():void {target.autoLayout = true;});
+			_flipEffects.addEventListener(EffectEvent.EFFECT_END, function f():void 
+			{
+				target.autoLayout = true;
+			});
+			
 			_flipEffects.play();
 		}
 
