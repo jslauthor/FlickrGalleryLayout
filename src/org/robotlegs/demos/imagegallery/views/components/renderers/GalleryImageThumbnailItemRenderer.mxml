@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Inversion of Control/Dependency Injection Using Robotlegs
+	Image Gallery
+	
+	Any portion of this demonstration may be reused for any purpose where not 
+	licensed by another party restricting such use. Please leave the credits intact.
+	
+	Joel Hooks
+	http://joelhooks.com
+	joelhooks@gmail.com 
+-->
+<s:ItemRenderer 
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	useHandCursor="true"
+	mouseEnabled="true"
+	buttonMode="true"
+	autoDrawBackground="false"
+	width="30" 
+	height="30"	
+	click="clickHandler(event)">
+
+	<fx:Script>
+		<![CDATA[
+			import org.robotlegs.demos.imagegallery.events.GalleryImageEvent;
+			import org.robotlegs.demos.imagegallery.models.vo.GalleryImage;
+			
+			[Bindable] protected var image:GalleryImage;
+			
+			override public function set data(value:Object):void
+			{
+				super.data = value;
+				this.image = value as GalleryImage;
+			}			
+			
+			protected function clickHandler(event:MouseEvent):void
+			{
+				this.owner.dispatchEvent(new GalleryImageEvent(GalleryImageEvent.SELECT_GALLERY_IMAGE, image));
+			}
+		]]>
+	</fx:Script>
+
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+	
+	<s:Rect width="100%" height="100%">
+		<s:fill>
+			<s:SolidColor color="#000000" />
+		</s:fill>
+	</s:Rect>
+	
+	<mx:Image
+		id="img"
+		smoothBitmapContent="true"
+		height="100%"
+		width="100%"
+		source="{image.thumbURL}"/>
+	
+</s:ItemRenderer>
