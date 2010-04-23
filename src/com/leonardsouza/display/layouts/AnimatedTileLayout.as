@@ -1744,7 +1744,6 @@ package com.leonardsouza.display.layouts
 						delayCount += 5;
 						itemRenderer = GalleryImageThumbnailItemRenderer(target.getElementAt((i*(requestedRowCount))+j));
 						itemRenderer.imagePiece = vec[(i*(requestedRowCount))+j];
-						trace((i*(requestedRowCount))+j);
 						flipEffect = new Rotate3D(itemRenderer);
 						flipEffect.autoCenterTransform = true;
 						flipEffect.startDelay = delayCount;
@@ -1761,7 +1760,7 @@ package com.leonardsouza.display.layouts
 							flipEffect.angleXTo = 0;
 							flipEffect.play();
 						});
-						_flipEffects.addChild(flipEffect);					
+						_flipEffects.addChild(flipEffect);
 					}
 					catch (error:Error)
 					{

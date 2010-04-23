@@ -150,9 +150,9 @@ package org.robotlegs.demos.imagegallery.views.mediators
 			var rows:int = galleryView.animatedLayout.requestedRowCount;
 			
 			var bitmapVector:Vector.<BitmapData> = new Vector.<BitmapData>();
-			for (var i:int = 0; i < columns; i++)
+			for (var i:int = 0; i < rows; i++)
 			{
-				for (var j:int = 0; j < rows; j++)
+				for (var j:int = 0; j < columns; j++)
 				{
 					var rect:Rectangle = new Rectangle(j * rectWidth, i * rectHeight, rectWidth, rectHeight);
 					var bm:BitmapData = new BitmapData(rectWidth, rectHeight, false, 0x000000);
