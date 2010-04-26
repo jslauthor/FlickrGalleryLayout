@@ -1748,15 +1748,18 @@ package com.leonardsouza.display.layouts
 						flipEffect.autoCenterTransform = true;
 						flipEffect.startDelay = delayCount;
 						flipEffect.duration = 400;
+						flipEffect.angleXFrom = 0;
 						flipEffect.angleXTo = 90;
 						flipEffect.addEventListener(EffectEvent.EFFECT_END, function f(event:EffectEvent):void
 						{
 							var item:GalleryImageThumbnailItemRenderer = GalleryImageThumbnailItemRenderer(event.effectInstance.target);
 							item.img.source = new Bitmap(item.imagePiece);
+
 							var flipEffect:Rotate3D = new Rotate3D(item);
 							flipEffect.autoCenterTransform = true;
 							flipEffect.startDelay = delayCount;
 							flipEffect.duration = 400;
+							flipEffect.angleXFrom = 90;
 							flipEffect.angleXTo = 0;
 							flipEffect.play();
 						});
