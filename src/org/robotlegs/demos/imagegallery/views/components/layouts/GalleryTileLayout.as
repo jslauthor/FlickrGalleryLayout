@@ -1728,7 +1728,7 @@ package org.robotlegs.demos.imagegallery.views.components.layouts
 		/* Animation Code */
 		
 		private var _flipEffects:Parallel;
-		public var isPieces:Boolean = false;
+		public var isPieces:Boolean = true;
 		private var _oldHorizontalGap:int;
 		private var _oldVerticalGap:int;
 		
@@ -1768,14 +1768,14 @@ package org.robotlegs.demos.imagegallery.views.components.layouts
 							var item:GalleryImageThumbnailItemRenderer = GalleryImageThumbnailItemRenderer(event.target.target);
 							if (event.value >= 180)
 							{
-								showPieces(isPieces, item);
+								showPieces(item, isPieces);
 								AnimateProperty(event.currentTarget).removeEventListener(TweenEvent.TWEEN_UPDATE, f);
 							}
 						});
 						flipEffect.addEventListener(TweenEvent.TWEEN_END, function f(event:TweenEvent):void
 						{
 							var item:GalleryImageThumbnailItemRenderer = GalleryImageThumbnailItemRenderer(event.target.target);
-							showPieces(isPieces, item);
+							if (item.isPiece == isPieces) showPieces(item, isPieces);
 						});
 						
 						_flipEffects.addChild(flipEffect);
@@ -1789,7 +1789,7 @@ package org.robotlegs.demos.imagegallery.views.components.layouts
 						});						
 						_flipEffects.addEventListener(EffectEvent.EFFECT_END, function f(event:EffectEvent):void
 						{
-							if (isPieces)
+							if (!isPieces)
 							{
 								horizontalGap = 0;
 								verticalGap = 0;
@@ -1817,8 +1817,9 @@ package org.robotlegs.demos.imagegallery.views.components.layouts
 			_flipEffects.play();
 		}
 		
-		protected function showPieces(bool:Boolean, item:GalleryImageThumbnailItemRenderer):void
+		protected function showPieces(item:GalleryImageThumbnailItemRenderer, bool:Boolean):void
 		{
+			trace(bool);
 			if (bool)
 				item.showThumb();
 			else

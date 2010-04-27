@@ -19,7 +19,6 @@ package  org.robotlegs.demos.imagegallery.events
 	public class GalleryImageEvent extends Event
 	{
 		public static const SELECT_GALLERY_IMAGE:String = "selectGalleryImage";
-		public static const REMOVE_GALLERY_IMAGE:String = "removeGalleryImage";
 		
 		public var image:GalleryImage;
 		

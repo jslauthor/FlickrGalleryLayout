@@ -60,21 +60,18 @@ package org.robotlegs.demos.imagegallery.views.mediators
 		
 		private var progress:GallerySearchProgress = new GallerySearchProgress();
 		private var selectedImageVector:Vector.<BitmapData>;
-		
-		public function GalleryViewMediator()
-		{
-		}
 
 		override public function onRegister():void
 		{
 			eventMap.mapListener( galleryView, GalleryImageEvent.SELECT_GALLERY_IMAGE, onImageSelected )
 			eventMap.mapListener( eventDispatcher, GalleryEvent.GALLERY_LOADED, onGalleryLoaded )
-			eventMap.mapListener( eventDispatcher, GallerySearchEvent.SEARCH, onSearch);
 			
 			eventMap.mapListener( galleryView.dgContainer, MouseEvent.MOUSE_MOVE, onContainerMouseMove )
 			eventMap.mapListener( galleryView.dgContainer, MouseEvent.ROLL_OUT, onContainerRollOut )
 			
 			eventDispatcher.dispatchEvent( new GalleryEvent( GalleryEvent.LOAD_GALLERY ) );
+			
+			galleryView.animatedLayout.isPieces = true;
 			
 			var filter:Rotate3D = new Rotate3D();
 			filter.autoCenterProjection = true;
@@ -97,13 +94,11 @@ package org.robotlegs.demos.imagegallery.views.mediators
 		
 		protected function selectImage(image:GalleryImage):void
 		{
-			trace(Math.random());
+			galleryView.animatedLayout.isPieces = galleryView.animatedLayout.isPieces ? false : true;
+			
 			progress.alpha = 0;
 			PopUpManager.addPopUp(progress, galleryView, false);
 			PopUpManager.centerPopUp(progress);
-			
-			galleryView.animatedLayout.isPieces = galleryView.animatedLayout.isPieces ? false : true;
-			//trace(galleryView.animatedLayout.isPieces);
 			
 			var toY:int = progress.y;
 			progress.y = -progress.height;
@@ -135,12 +130,7 @@ package org.robotlegs.demos.imagegallery.views.mediators
 		
 		protected function onImageSelected(event:GalleryImageEvent):void
 		{
-			this.selectImage(event.image);
-		}
-		
-		protected function onSearch(event:GallerySearchEvent):void
-		{
-			//this.galleryView.setThumbScrollPosition(0); 
+			selectImage(event.image);
 		}
 		
 		private function divideAndConquer(source:Bitmap, rectWidth:int = 30, rectHeight:int = 30):Vector.<BitmapData>
