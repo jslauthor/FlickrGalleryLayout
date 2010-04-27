@@ -97,11 +97,13 @@ package org.robotlegs.demos.imagegallery.views.mediators
 		
 		protected function selectImage(image:GalleryImage):void
 		{
-			//progress.width = galleryView.width;
-		
+			trace(Math.random());
 			progress.alpha = 0;
 			PopUpManager.addPopUp(progress, galleryView, false);
 			PopUpManager.centerPopUp(progress);
+			
+			galleryView.animatedLayout.isPieces = galleryView.animatedLayout.isPieces ? false : true;
+			//trace(galleryView.animatedLayout.isPieces);
 			
 			var toY:int = progress.y;
 			progress.y = -progress.height;
@@ -123,9 +125,6 @@ package org.robotlegs.demos.imagegallery.views.mediators
 					});
 				});
 			loader.load(new URLRequest(image.URL));
-
-			//galleryView.imageSource = image.URL;
-			//eventDispatcher.dispatchEvent(new GalleryImageEvent(GalleryImageEvent.SELECT_GALLERY_IMAGE, image));
 		}
 		
 		protected function onGalleryLoaded(event:GalleryEvent):void

@@ -17,7 +17,7 @@
 	width="800" height="800" 
 	creationComplete="creationCompleteHandler(event)" 
 	xmlns:components="org.robotlegs.demos.imagegallery.views.components.*" 
-	xmlns:layouts="com.leonardsouza.display.layouts.*">
+	xmlns:layouts="com.leonardsouza.display.layouts.*" xmlns:layouts1="org.robotlegs.demos.imagegallery.views.components.layouts.*">
 	
 	<s:layout>
 		<s:BasicLayout/>
@@ -38,6 +38,8 @@
 			private var _dataProvider:ArrayCollection;
 			private var _imageSource:String;
 			private var _rotateFilter:Rotate3D;
+			
+			private var _isPiece:Boolean = false;
 			
 			public function get imageSource():String
 			{
@@ -76,6 +78,16 @@
 			{
 				_rotateFilter = value;
 			} 
+
+			public function get isPiece():Boolean
+			{
+				return _isPiece;
+			}
+			
+			public function set isPiece(value:Boolean):void
+			{
+				_isPiece = value;
+			}
 			
 			protected function creationCompleteHandler(event:FlexEvent):void
 			{
@@ -129,7 +141,7 @@
 			dataProvider="{this.dataProvider}"
 			itemRenderer="org.robotlegs.demos.imagegallery.views.components.renderers.GalleryImageThumbnailItemRenderer">
 			<s:layout>
-				<layouts:AnimatedTileLayout
+				<layouts1:GalleryTileLayout
 					id="animatedLayout"
 					verticalGap="5" horizontalGap="5" requestedColumnCount="20" requestedRowCount="10" />
 			</s:layout>

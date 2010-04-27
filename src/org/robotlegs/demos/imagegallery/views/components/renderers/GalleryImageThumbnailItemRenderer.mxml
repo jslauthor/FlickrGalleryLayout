@@ -9,6 +9,11 @@
 	Joel Hooks
 	http://joelhooks.com
 	joelhooks@gmail.com 
+
+	Modified much to Joel's chagrin by Leonard Souza 
+	http://www.leonardsouza.com
+	hey@leonardsouza.com
+
 -->
 <s:ItemRenderer 
 	xmlns:fx="http://ns.adobe.com/mxml/2009" 
@@ -27,7 +32,9 @@
 			import org.robotlegs.demos.imagegallery.events.GalleryImageEvent;
 			import org.robotlegs.demos.imagegallery.models.vo.GalleryImage;
 			
-			public var imagePiece:BitmapData;
+			private var _imagePiece:BitmapData;
+			private var _origImage:BitmapData;
+			private var _isPiece:Boolean = false;
 			
 			[Bindable] protected var image:GalleryImage;
 			
@@ -36,11 +43,57 @@
 				super.data = value;
 				this.image = value as GalleryImage;
 			}			
+
+			public function get imagePiece():BitmapData
+			{
+				return _imagePiece;
+			}
+			
+			public function set imagePiece(value:BitmapData):void
+			{
+				_imagePiece = value;
+			}
+
+			public function get isPiece():Boolean
+			{
+				return _isPiece;
+			}
+			
+			public function set isPiece(value:Boolean):void
+			{
+				_isPiece = value;
+			}
+			
+			/* Functions */
+			
+			public function showPiece():void
+			{
+				if (imagePiece != null)
+				{
+					var bm:BitmapData = new BitmapData(img.width, img.height, false);
+					bm.draw(img);
+					_origImage = bm;
+					img.source = new Bitmap(imagePiece);
+					_isPiece = true;
+				}
+			}
+			
+			public function showThumb():void
+			{
+				if (image != null)
+				{
+					img.source = new Bitmap(_origImage);
+					_isPiece = false;
+				}
+			}
+			
+			/* Event Handlers */
 			
 			protected function clickHandler(event:MouseEvent):void
 			{
-				this.owner.dispatchEvent(new GalleryImageEvent(GalleryImageEvent.SELECT_GALLERY_IMAGE, image));
+				owner.dispatchEvent(new GalleryImageEvent(GalleryImageEvent.SELECT_GALLERY_IMAGE, image));
 			}
+
 		]]>
 	</fx:Script>
 

@@ -16,13 +16,15 @@ which is what you see here, slightly modified, with some animation :)
 
 */
 
-package com.leonardsouza.display.layouts
+package org.robotlegs.demos.imagegallery.views.components.layouts
 {
 	import com.gskinner.motion.*;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.events.MouseEvent;
+	import flash.geom.PerspectiveProjection;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
 	import mx.controls.Image;
@@ -34,7 +36,9 @@ package com.leonardsouza.display.layouts
 	import mx.events.PropertyChangeEvent;
 	import mx.events.TweenEvent;
 	
+	import org.robotlegs.demos.imagegallery.models.vo.Gallery;
 	import org.robotlegs.demos.imagegallery.models.vo.GalleryImage;
+	import org.robotlegs.demos.imagegallery.views.components.GalleryView;
 	import org.robotlegs.demos.imagegallery.views.components.renderers.GalleryImageThumbnailItemRenderer;
 	
 	import spark.components.supportClasses.GroupBase;
@@ -113,7 +117,7 @@ package com.leonardsouza.display.layouts
 	 *  @playerversion AIR 1.5
 	 *  @productversion Flex 4
 	 */
-	public class AnimatedTileLayout extends LayoutBase
+	public class GalleryTileLayout extends LayoutBase
 	{
 		//--------------------------------------------------------------------------
 		//
@@ -129,7 +133,7 @@ package com.leonardsouza.display.layouts
 		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
-		public function AnimatedTileLayout():void
+		public function GalleryTileLayout():void
 		{
 			super();
 		}
@@ -1724,6 +1728,9 @@ package com.leonardsouza.display.layouts
 		/* Animation Code */
 		
 		private var _flipEffects:Parallel;
+		public var isPieces:Boolean = false;
+		private var _oldHorizontalGap:int;
+		private var _oldVerticalGap:int;
 		
 		public function animateFlip(vec:Vector.<BitmapData> = null):void
 		{
@@ -1736,7 +1743,7 @@ package com.leonardsouza.display.layouts
 			
 			var itemRenderer:GalleryImageThumbnailItemRenderer;
 			var flipEffect:AnimateProperty;
-			
+
 			var delayCount:int = 0;
 			var reduceCount:int = 0;
 			for (var i:int = 0; i < requestedColumnCount; i++)
@@ -1747,6 +1754,8 @@ package com.leonardsouza.display.layouts
 					{
 						delayCount += 5;
 						itemRenderer = GalleryImageThumbnailItemRenderer(target.getElementAt((i*(requestedRowCount))+j));
+						// This doesn't work! Boo! Neither does translating the matrix3d manually! It also kills all mouse events on the renderer, lame.
+						// itemRenderer.maintainProjectionCenter = true;
 						itemRenderer.imagePiece = vec[(i*(requestedRowCount))+j];
 						flipEffect = new AnimateProperty(itemRenderer);
 						flipEffect.startDelay = delayCount;
@@ -1756,16 +1765,45 @@ package com.leonardsouza.display.layouts
 						flipEffect.toValue = 360;
 						flipEffect.addEventListener(TweenEvent.TWEEN_UPDATE, function f(event:TweenEvent):void
 						{
-							trace(event.target.target.rotationX);
-							/*
-							if (AnimateTransformInstance(event.effectInstance).animation.currentValue.postLayoutRotationX >= 180)
+							var item:GalleryImageThumbnailItemRenderer = GalleryImageThumbnailItemRenderer(event.target.target);
+							if (event.value >= 180)
 							{
-								var item:GalleryImageThumbnailItemRenderer = GalleryImageThumbnailItemRenderer(event.effectInstance.target);
-								item.img.source = new Bitmap(item.imagePiece);
+								showPieces(isPieces, item);
+								AnimateProperty(event.currentTarget).removeEventListener(TweenEvent.TWEEN_UPDATE, f);
 							}
-							*/
 						});
+						flipEffect.addEventListener(TweenEvent.TWEEN_END, function f(event:TweenEvent):void
+						{
+							var item:GalleryImageThumbnailItemRenderer = GalleryImageThumbnailItemRenderer(event.target.target);
+							showPieces(isPieces, item);
+						});
+						
 						_flipEffects.addChild(flipEffect);
+						_flipEffects.addEventListener(EffectEvent.EFFECT_START, function f(event:EffectEvent):void
+						{
+							if (!isPieces)
+							{
+								_oldHorizontalGap = horizontalGap;
+								_oldVerticalGap = verticalGap;					
+							}
+						});						
+						_flipEffects.addEventListener(EffectEvent.EFFECT_END, function f(event:EffectEvent):void
+						{
+							if (isPieces)
+							{
+								horizontalGap = 0;
+								verticalGap = 0;
+							}
+							else
+							{
+								horizontalGap = _oldHorizontalGap;
+								verticalGap = _oldVerticalGap;	
+							}							
+						});
+						_flipEffects.addEventListener(EffectEvent.EFFECT_END, function f():void 
+						{
+							target.autoLayout = true;
+						});
 					}
 					catch (error:Error)
 					{
@@ -1776,32 +1814,16 @@ package com.leonardsouza.display.layouts
 				delayCount -= reduceCount;
 			}
 			
-			_flipEffects.addEventListener(EffectEvent.EFFECT_END, function f():void 
-			{
-				target.autoLayout = true;
-			});
-			
 			_flipEffects.play();
 		}
-
-		/*
-		public function fastImageSwap(vec:Vector.<BitmapData>):void
+		
+		protected function showPieces(bool:Boolean, item:GalleryImageThumbnailItemRenderer):void
 		{
-			if (vec.length != target.numElements) return; 
-			target.autoLayout = false;
-			
-			for (var i:int = 0; i < requestedColumnCount; i++)
-			{
-				for (var j:int = 0; j < requestedRowCount; j++)
-				{
-					var current:int = (i*requestedRowCount) + j;
-					var item:GalleryImageThumbnailItemRenderer = target.getElementAt(current) as GalleryImageThumbnailItemRenderer;
-					//item.img.source = new Bitmap(vec[current]);
-				}
-			}
-			target.autoLayout = true;
+			if (bool)
+				item.showThumb();
+			else
+				item.showPiece();
 		}
-		*/
 		
 		/**
 		 *  @private
