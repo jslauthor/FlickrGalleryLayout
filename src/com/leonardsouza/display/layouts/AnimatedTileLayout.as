@@ -22,14 +22,17 @@ package com.leonardsouza.display.layouts
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
 	
 	import mx.controls.Image;
 	import mx.core.ILayoutElement;
 	import mx.core.IVisualElement;
+	import mx.effects.AnimateProperty;
 	import mx.effects.Parallel;
 	import mx.events.EffectEvent;
 	import mx.events.PropertyChangeEvent;
+	import mx.events.TweenEvent;
 	
 	import org.robotlegs.demos.imagegallery.models.vo.GalleryImage;
 	import org.robotlegs.demos.imagegallery.views.components.renderers.GalleryImageThumbnailItemRenderer;
@@ -39,6 +42,7 @@ package com.leonardsouza.display.layouts
 	import spark.core.NavigationUnit;
 	import spark.effects.Rotate;
 	import spark.effects.Rotate3D;
+	import spark.effects.supportClasses.AnimateTransformInstance;
 	import spark.layouts.*;
 	import spark.layouts.supportClasses.DropLocation;
 	import spark.layouts.supportClasses.LayoutBase;
@@ -1731,7 +1735,7 @@ package com.leonardsouza.display.layouts
 			if (numElements == 0) return;
 			
 			var itemRenderer:GalleryImageThumbnailItemRenderer;
-			var flipEffect:Rotate3D;
+			var flipEffect:AnimateProperty;
 			
 			var delayCount:int = 0;
 			var reduceCount:int = 0;
@@ -1744,24 +1748,22 @@ package com.leonardsouza.display.layouts
 						delayCount += 5;
 						itemRenderer = GalleryImageThumbnailItemRenderer(target.getElementAt((i*(requestedRowCount))+j));
 						itemRenderer.imagePiece = vec[(i*(requestedRowCount))+j];
-						flipEffect = new Rotate3D(itemRenderer);
-						flipEffect.autoCenterTransform = true;
+						flipEffect = new AnimateProperty(itemRenderer);
 						flipEffect.startDelay = delayCount;
 						flipEffect.duration = 400;
-						flipEffect.angleXFrom = 0;
-						flipEffect.angleXTo = 90;
-						flipEffect.addEventListener(EffectEvent.EFFECT_END, function f(event:EffectEvent):void
+						flipEffect.property = "rotationX";
+						flipEffect.fromValue = 0;
+						flipEffect.toValue = 360;
+						flipEffect.addEventListener(TweenEvent.TWEEN_UPDATE, function f(event:TweenEvent):void
 						{
-							var item:GalleryImageThumbnailItemRenderer = GalleryImageThumbnailItemRenderer(event.effectInstance.target);
-							item.img.source = new Bitmap(item.imagePiece);
-
-							var flipEffect:Rotate3D = new Rotate3D(item);
-							flipEffect.autoCenterTransform = true;
-							flipEffect.startDelay = delayCount;
-							flipEffect.duration = 400;
-							flipEffect.angleXFrom = 90;
-							flipEffect.angleXTo = 0;
-							flipEffect.play();
+							trace(event.target.target.rotationX);
+							/*
+							if (AnimateTransformInstance(event.effectInstance).animation.currentValue.postLayoutRotationX >= 180)
+							{
+								var item:GalleryImageThumbnailItemRenderer = GalleryImageThumbnailItemRenderer(event.effectInstance.target);
+								item.img.source = new Bitmap(item.imagePiece);
+							}
+							*/
 						});
 						_flipEffects.addChild(flipEffect);
 					}
