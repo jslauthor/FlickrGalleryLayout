@@ -19,6 +19,7 @@ which is what you see here, slightly modified, with some animation :)
 package org.robotlegs.demos.imagegallery.views.components.layouts
 {
 	import com.gskinner.motion.*;
+	import com.gskinner.motion.easing.Sine;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -1789,6 +1790,13 @@ package org.robotlegs.demos.imagegallery.views.components.layouts
 						});						
 						_flipEffects.addEventListener(EffectEvent.EFFECT_END, function f(event:EffectEvent):void
 						{
+							var tween:GTween;
+							if (!isPieces)
+								tween = new GTween(this, .2, {horizontalGap: 0, verticalGap: 0}, {ease:Sine.easeIn});
+							else
+								tween = new GTween(this, .2, {horizontalGap: _oldHorizontalGap, verticalGap: _oldVerticalGap}, {ease:Sine.easeIn});
+
+							/*
 							if (!isPieces)
 							{
 								horizontalGap = 0;
@@ -1798,7 +1806,8 @@ package org.robotlegs.demos.imagegallery.views.components.layouts
 							{
 								horizontalGap = _oldHorizontalGap;
 								verticalGap = _oldVerticalGap;	
-							}							
+							}	
+							*/
 						});
 						_flipEffects.addEventListener(EffectEvent.EFFECT_END, function f():void 
 						{
@@ -1819,11 +1828,7 @@ package org.robotlegs.demos.imagegallery.views.components.layouts
 		
 		protected function showPieces(item:GalleryImageThumbnailItemRenderer, bool:Boolean):void
 		{
-			trace(bool);
-			if (bool)
-				item.showThumb();
-			else
-				item.showPiece();
+			bool ? item.showThumb() : item.showPiece();
 		}
 		
 		/**
