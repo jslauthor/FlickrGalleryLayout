@@ -156,10 +156,12 @@ package org.robotlegs.demos.imagegallery.views.mediators
 			var rows:int = galleryView.animatedLayout.requestedRowCount;
 			
 			var background:BitmapData = new BitmapData(galleryView.dgContainer.width, galleryView.dgContainer.height, false, 0x000000);
-			var scaleFactor:Number = getScaleFactor(source, background);
-			trace(scaleFactor);
-			source.transform.matrix = new Matrix(scaleFactor, 0, 0, scaleFactor, 0, 0);
-			background.draw(source.bitmapData, source.transform.matrix); 
+			var bgActualHeight:Number = background.height - (galleryView.animatedLayout.verticalGap * galleryView.animatedLayout.requestedRowCount) + galleryView.animatedLayout.verticalGap;
+			var bgActualWidth:Number = background.width - (galleryView.animatedLayout.horizontalGap * galleryView.animatedLayout.requestedColumnCount) + galleryView.animatedLayout.horizontalGap;
+			
+			var scaleFactor:Number = getScaleFactor(source, bgActualWidth, bgActualHeight);
+			var matrix:Matrix = new Matrix(scaleFactor, 0, 0, scaleFactor, (bgActualWidth/2 - (source.width*scaleFactor)/2), (bgActualHeight/2 - (source.height*scaleFactor)/2));
+			background.draw(source.bitmapData, matrix); 
 			
 			var bitmapVector:Vector.<BitmapData> = new Vector.<BitmapData>();
 			for (var i:int = 0; i < rows; i++)
@@ -175,27 +177,12 @@ package org.robotlegs.demos.imagegallery.views.mediators
 			return bitmapVector;
 		}
 		
-		private function getScaleFactor(source:Bitmap, background:BitmapData):Number
+		private function getScaleFactor(source:Bitmap, bgActualWidth:Number, bgActualHeight:Number):Number
 		{
-			trace(source.width + " " + source.height);
-			trace(background.width + " " + background.height);
-			if (source.height <= background.height && source.width <= background.width)
-				return 1;
-			
-			if (source.height >= source.width)
-			{
-				if (source.height >= background.height)
-					return background.height / source.height;
-				else
-					return source.height / background.height;
-			}
+			if (bgActualWidth >= bgActualHeight)
+				return bgActualWidth / source.width;
 			else
-			{
-				if (source.width >= background.width)
-					return background.width / source.width;
-				else
-					return source.width / background.width;				
-			}
+				return bgActualHeight / source.height;
 		}
 		
 	}
