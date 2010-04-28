@@ -23,21 +23,25 @@ package org.robotlegs.demos.imagegallery.views.mediators
 	import flash.display.DisplayObject;
 	import flash.display.Loader;
 	import flash.events.Event;
+	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.events.ProgressEvent;
 	import flash.events.TimerEvent;
+	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.net.URLRequest;
 	import flash.utils.Timer;
 	
 	import mx.collections.ArrayCollection;
+	import mx.controls.Alert;
 	import mx.controls.Image;
 	import mx.core.Application;
 	import mx.core.FlexGlobals;
 	import mx.core.IVisualElement;
 	import mx.managers.PopUpManager;
 	
+	import org.osmf.layout.AbsoluteLayoutFacet;
 	import org.robotlegs.demos.imagegallery.events.GalleryEvent;
 	import org.robotlegs.demos.imagegallery.events.GalleryImageEvent;
 	import org.robotlegs.demos.imagegallery.events.GallerySearchEvent;
@@ -96,6 +100,11 @@ package org.robotlegs.demos.imagegallery.views.mediators
 		{
 			galleryView.animatedLayout.isPieces = galleryView.animatedLayout.isPieces ? false : true;
 			
+			if (!galleryView.animatedLayout.isPieces)
+				dispatch(new GallerySearchEvent(GallerySearchEvent.SEARCH_NOT_AVAILABLE));
+			else
+				dispatch(new GallerySearchEvent(GallerySearchEvent.SEARCH_AVAILABLE));
+			
 			progress.alpha = 0;
 			PopUpManager.addPopUp(progress, galleryView, false);
 			PopUpManager.centerPopUp(progress);
@@ -119,6 +128,14 @@ package org.robotlegs.demos.imagegallery.views.mediators
 						galleryView.animatedLayout.animateFlip(selectedImageVector);
 					});
 				});
+			loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, 
+				function f(event:IOErrorEvent):void 
+				{ 
+					var tween1:GTween = new GTween(progress, .5, {alpha:0}, {ease:Sine.easeIn});
+					var tween2:GTween = new GTween(progress, .5, {y:galleryView.height}, {ease:Back.easeIn});
+					Alert.show("Error loading image!");
+				});
+				
 			loader.load(new URLRequest(image.URL));
 		}
 		
@@ -138,6 +155,12 @@ package org.robotlegs.demos.imagegallery.views.mediators
 			var columns:int = galleryView.animatedLayout.requestedColumnCount;
 			var rows:int = galleryView.animatedLayout.requestedRowCount;
 			
+			var background:BitmapData = new BitmapData(galleryView.width, galleryView.height, false, 0x000000);
+			var scaleFactor:Number = getScaleFactor(source, background);
+			trace(scaleFactor);
+			source.transform.matrix = new Matrix(scaleFactor, 0, 0, scaleFactor, (background.width/2 - source.width/2), (background.height/2 - source.height/2));
+			background.draw(source.bitmapData, source.transform.matrix); 
+			
 			var bitmapVector:Vector.<BitmapData> = new Vector.<BitmapData>();
 			for (var i:int = 0; i < rows; i++)
 			{
@@ -145,11 +168,30 @@ package org.robotlegs.demos.imagegallery.views.mediators
 				{
 					var rect:Rectangle = new Rectangle(j * rectWidth, i * rectHeight, rectWidth, rectHeight);
 					var bm:BitmapData = new BitmapData(rectWidth, rectHeight, false, 0x000000);
-					bm.copyPixels(source.bitmapData, rect, new Point());
+					bm.copyPixels(background, rect, new Point());
 					bitmapVector.push(bm);
 				}
 			}
 			return bitmapVector;
 		}
+		
+		private function getScaleFactor(source:Bitmap, background:BitmapData):Number
+		{
+			if (source.height > source.width)
+			{
+				if (source.height > background.height)
+					return background.height / source.height;
+				else
+					return source.height / background.height;
+			}
+			else
+			{
+				if (source.width > background.width)
+					return background.width / source.width;
+				else
+					return source.width / background.width;				
+			}
+		}
+		
 	}
 }

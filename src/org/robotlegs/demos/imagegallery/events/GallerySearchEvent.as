@@ -17,6 +17,7 @@ package org.robotlegs.demos.imagegallery.events
 	{
 		public static const SEARCH:String = "search";
 		public static const SEARCH_NOT_AVAILABLE:String = "searchNotAvailable";
+		public static const SEARCH_AVAILABLE:String = "searchAvailable";
 		
 		public var searchTerm:String;
 		

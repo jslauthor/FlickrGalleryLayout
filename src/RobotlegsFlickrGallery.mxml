@@ -35,7 +35,7 @@
 	<components:GalleryHeader/>
 	
 	<components:GallerySearch id="search"
-							  width="100%"
+							  width="{gallery.width}"
 							  visible="false"
 							  includeInLayout="false"/>
 	

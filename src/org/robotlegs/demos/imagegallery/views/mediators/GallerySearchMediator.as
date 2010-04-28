@@ -32,6 +32,8 @@ package org.robotlegs.demos.imagegallery.views.mediators
 		override public function onRegister():void
 		{
 			eventMap.mapListener( gallerySearch, GallerySearchEvent.SEARCH, handleSearch );
+			eventMap.mapListener( eventDispatcher, GallerySearchEvent.SEARCH_AVAILABLE, handleSearchAvailable );
+			eventMap.mapListener( eventDispatcher, GallerySearchEvent.SEARCH_NOT_AVAILABLE, handleSearchNotAvailable );
 			
 			gallerySearch.visible = gallerySearch.includeInLayout = service.searchAvailable;
 		}
@@ -39,6 +41,16 @@ package org.robotlegs.demos.imagegallery.views.mediators
 		protected function handleSearch(event:GallerySearchEvent):void
 		{
 			eventDispatcher.dispatchEvent( event );
+		}
+		
+		protected function handleSearchAvailable(event:GallerySearchEvent):void
+		{
+			gallerySearch.enabled = true;
+		}
+		
+		protected function handleSearchNotAvailable(event:GallerySearchEvent):void
+		{
+			gallerySearch.enabled = false;
 		}
 	}
 }

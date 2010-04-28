@@ -1780,7 +1780,7 @@ package org.robotlegs.demos.imagegallery.views.components.layouts
 							if (item.isPiece == isPieces) showPieces(item, isPieces);
 						});
 						
-						// Parallel Flip Effects
+						// Flip Effects
 						
 						_flipEffects.addChild(flipEffect);
 						_flipEffects.addEventListener(EffectEvent.EFFECT_START, function f(event:EffectEvent):void
