@@ -155,10 +155,10 @@ package org.robotlegs.demos.imagegallery.views.mediators
 			var columns:int = galleryView.animatedLayout.requestedColumnCount;
 			var rows:int = galleryView.animatedLayout.requestedRowCount;
 			
-			var background:BitmapData = new BitmapData(galleryView.width, galleryView.height, false, 0x000000);
+			var background:BitmapData = new BitmapData(galleryView.dgContainer.width, galleryView.dgContainer.height, false, 0x000000);
 			var scaleFactor:Number = getScaleFactor(source, background);
 			trace(scaleFactor);
-			source.transform.matrix = new Matrix(scaleFactor, 0, 0, scaleFactor, (background.width/2 - source.width/2), (background.height/2 - source.height/2));
+			source.transform.matrix = new Matrix(scaleFactor, 0, 0, scaleFactor, 0, 0);
 			background.draw(source.bitmapData, source.transform.matrix); 
 			
 			var bitmapVector:Vector.<BitmapData> = new Vector.<BitmapData>();
@@ -177,16 +177,21 @@ package org.robotlegs.demos.imagegallery.views.mediators
 		
 		private function getScaleFactor(source:Bitmap, background:BitmapData):Number
 		{
-			if (source.height > source.width)
+			trace(source.width + " " + source.height);
+			trace(background.width + " " + background.height);
+			if (source.height <= background.height && source.width <= background.width)
+				return 1;
+			
+			if (source.height >= source.width)
 			{
-				if (source.height > background.height)
+				if (source.height >= background.height)
 					return background.height / source.height;
 				else
 					return source.height / background.height;
 			}
 			else
 			{
-				if (source.width > background.width)
+				if (source.width >= background.width)
 					return background.width / source.width;
 				else
 					return source.width / background.width;				
