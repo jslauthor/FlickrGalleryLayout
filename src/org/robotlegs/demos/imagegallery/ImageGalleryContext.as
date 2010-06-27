@@ -12,6 +12,7 @@
 package org.robotlegs.demos.imagegallery
 {
 	import flash.display.DisplayObjectContainer;
+	import flash.system.Security;
 	
 	import org.robotlegs.demos.imagegallery.controller.*;
 	import org.robotlegs.demos.imagegallery.events.*;
@@ -30,6 +31,16 @@ package org.robotlegs.demos.imagegallery
 		
 		override public function startup():void
 		{
+			
+			Security.allowDomain(["api.flickr.com", "flickr.com", "*"]); 
+			Security.allowInsecureDomain(["api.flickr.com", "flickr.com", "*"]); 
+			Security.loadPolicyFile('http://farm1.static.flickr.com/crossdomain.xml'); 
+			Security.loadPolicyFile('http://farm2.static.flickr.com/crossdomain.xml'); 
+			Security.loadPolicyFile('http://farm3.static.flickr.com/crossdomain.xml'); 
+			Security.loadPolicyFile('http://farm4.static.flickr.com/crossdomain.xml'); 
+			Security.loadPolicyFile('http://farm5.static.flickr.com/crossdomain.xml');
+			Security.loadPolicyFile('http://static.flickr.com/crossdomain.xml'); 
+			
 			//map controller
 			commandMap.mapEvent(GalleryEvent.GALLERY_LOADED, UpdateGalleryCommand, GalleryEvent);
 			commandMap.mapEvent(GalleryImageEvent.SELECT_GALLERY_IMAGE, SetSelectedImageCommand, GalleryImageEvent);
