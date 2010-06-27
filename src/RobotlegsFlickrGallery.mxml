@@ -19,7 +19,7 @@
 			   maxWidth="1000"
 			   maxHeight="1000"
 			   frameRate="60"
->
+ viewSourceURL="srcview/index.html">
 
 	<s:layout>
 		<s:VerticalLayout paddingBottom="10"
