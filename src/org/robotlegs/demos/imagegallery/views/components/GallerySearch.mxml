@@ -28,6 +28,6 @@
 		]]>
 	</fx:Script>
 	<mx:Spacer width="100%"/>
-	<s:TextInput id="searchTermInput" enter="handleSearch()"/>
+	<s:TextInput id="searchTermInput" enter="searchTermInput.enabled ? handleSearch() : null"/>
 	<s:Button id="submitSearchButton" label="search" enabled="{this.searchTermInput.text.length &gt; 3}" click="handleSearch()"/>
 </s:Group>

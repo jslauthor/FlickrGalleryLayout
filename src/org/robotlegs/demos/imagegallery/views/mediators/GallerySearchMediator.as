@@ -45,11 +45,15 @@ package org.robotlegs.demos.imagegallery.views.mediators
 		
 		protected function handleSearchAvailable(event:GallerySearchEvent):void
 		{
+			gallerySearch.searchTermInput.enabled = true;
+			gallerySearch.submitSearchButton.enabled = true;
 			gallerySearch.enabled = true;
 		}
 		
 		protected function handleSearchNotAvailable(event:GallerySearchEvent):void
 		{
+			gallerySearch.searchTermInput.enabled = false;
+			gallerySearch.submitSearchButton.enabled = false;
 			gallerySearch.enabled = false;
 		}
 	}
